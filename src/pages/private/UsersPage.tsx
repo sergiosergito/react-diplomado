@@ -1,24 +1,21 @@
 import { Box } from "@mui/material";
 
-import {
-  //  TaskDialog,
-  UserFilter,
-  UserHeader,
-  //  type TaskActionState,
-} from "../../components";
-import type { UserFilterStatusType } from "../../components/users/type";
+import { UserFilter, UserHeader, UserTabla } from "../../components";
+import type {
+  UserFilterStatusType,
+  UserType,
+} from "../../components/users/type";
 import { useState } from "react";
-
-//import { useState } from "react";
-//import type { TaskFilterDoneType, TaskType } from '../../components/tasks/type';
-//import type { GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
-//import { useAlert, useAxios } from '../../hooks';
-//import { errorHelper, hanleZodError } from '../../helpers';
-//import { schemaTask, type TaskFormValues } from '../../models';
+import type { User } from "../../contexts";
 
 export const UsersPage = () => {
   const [filterStatus, setFilterStatus] = useState<UserFilterStatusType>("all");
   const [search, setSearch] = useState("");
+  const [users, setUsers] = useState<UserType[]>([
+    { id: 1, username: "user1", status: "active" },
+    { id: 2, username: "user2", status: "inactive" },
+    { id: 3, username: "user3", status: "active" },
+  ]);
 
   const handleNewUser = () => {
     console.log("Nuevo usuario");
@@ -33,29 +30,31 @@ export const UsersPage = () => {
         setSearch={setSearch}
       ></UserFilter>
       {search} - {filterStatus}
+      <UserTabla users={users}></UserTabla>
     </Box>
   );
+};
 
-  //  const { showAlert } = useAlert();
-  //  const axios = useAxios();
-  //  const [search, setSearch] = useState('');
+//  const { showAlert } = useAlert();
+//  const axios = useAxios();
+//  const [search, setSearch] = useState('');
 
-  /*
+/*
 const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 1,
     pageSize: 10,
   });
 */
-  //  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-  //const [openDialog, setOpenDialog] = useState(false);
-  //  const [task, setTask] = useState<TaskType | null>(null);
-  /*
+//  const [sortModel, setSortModel] = useState<GridSortModel>([]);
+//const [openDialog, setOpenDialog] = useState(false);
+//  const [task, setTask] = useState<TaskType | null>(null);
+/*
   useEffect(() => {
     listTaskApi();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, filterStatus, paginationModel, sortModel]);
 */
-  /*
+/*
   const listTaskApi = async () => {
     try {
       const orderBy = sortModel[0]?.field;
@@ -77,25 +76,25 @@ const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     }
   };
 */
-  /*
+/*
   const handleOpenCreateDialog = () => {
     //setOpenDialog(true);
     //setTask(null);
   };
 */
-  /*
+/*
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setTask(null);
   };
 */
-  /*
+/*
   const handleOpenEditDialog = (task: TaskType) => {
     setOpenDialog(true);
     setTask(task);
   };
 */
-  /*
+/*
   const handleCreateEdit = async (
     _: TaskActionState | undefined,
     formdata: FormData
@@ -123,7 +122,7 @@ const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     }
   };
 */
-  /*
+/*
   const handleDelete = async (id: number) => {
     try {
       const confirmed = window.confirm('¿Estas seguro de eliminar?');
@@ -137,7 +136,7 @@ const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     }
   };
 */
-  /*
+/*
   const handleDone = async (id: number, done: boolean) => {
     try {
       const confirmed = window.confirm(
@@ -153,4 +152,3 @@ const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     }
   };
 */
-};

@@ -1,7 +1,6 @@
 import {
   DataGrid,
   type GridColDef,
-  type GridPaginationModel,
   type GridRenderCellParams,
 } from "@mui/x-data-grid";
 import type { UserType } from "./type";
@@ -12,42 +11,23 @@ import {
   Done as DoneIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import type { GridSortModel } from "@mui/x-data-grid";
 
 interface Props {
   users: UserType[];
-  rowCount: number;
-  paginationModel: GridPaginationModel;
-  setPaginationModel: (model: GridPaginationModel) => void;
-  sortModel: GridSortModel;
-  setSortModel: (model: GridSortModel) => void;
-  handleDelete: (id: number) => void;
-  handleDone: (id: number, done: boolean) => void;
-  handleOpenEditDialog: (task: UserType) => void;
 }
 
-export const UserTabla = ({
-  users,
-  rowCount,
-  paginationModel,
-  setPaginationModel,
-  setSortModel,
-  sortModel,
-  handleDelete,
-  handleDone: handledone,
-  handleOpenEditDialog,
-}: Props) => {
+export const UserTabla = ({ users }: Props) => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
-    { field: "name", headerName: "Tarea", flex: 1 },
+    { field: "username", headerName: "Username", width: 200 },
     {
-      field: "done",
-      headerName: "Estado",
+      field: "status",
+      headerName: "Status",
       width: 150,
       renderCell: (params: GridRenderCellParams) => (
         <Chip
-          label={params.value === true ? "Hecho" : "Pendiente"}
-          color={params.value === true ? "success" : "warning"}
+          label={params.value}
+          color={params.value === "active" ? "primary" : "default"}
           size="small"
           variant="outlined"
         />
@@ -60,27 +40,22 @@ export const UserTabla = ({
       filterable: false,
       width: 200,
       renderCell: (params: GridRenderCellParams) => (
-        <Stack direction={"row"} spacing={1}>
-          <Tooltip title="Editar">
-            <IconButton
-              size="small"
-              onClick={() => handleOpenEditDialog(params.row)}
-            >
+        <Stack direction="row" spacing={1}>
+          <Tooltip title="Edit" arrow>
+            <IconButton size="small" onClick={() => console.log("Edit user")}>
               <EditIcon fontSize="small" />
             </IconButton>
           </Tooltip>
 
           <Tooltip
-            title={
-              params.row.done === true ? "Marcar pendiente" : "Marcar hecho"
-            }
+            title={params.row.status === "active" ? "Deactivate" : "Activate"}
           >
             <IconButton
               size="small"
-              color={params.row.done === true ? "warning" : "success"}
-              onClick={() => handledone(params.row.id, params.row.done)}
+              color={params.row.status === "active" ? "warning" : "success"}
+              onClick={() => console.log("marcar user")}
             >
-              {params.row.done === true ? (
+              {params.row.status === "active" ? (
                 <UndoIcon fontSize="small" />
               ) : (
                 <DoneIcon fontSize="small" />
@@ -88,11 +63,11 @@ export const UserTabla = ({
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Eliminar">
+          <Tooltip title="Editar">
             <IconButton
               size="small"
               color="error"
-              onClick={() => handleDelete(params.row.id)}
+              onClick={() => console.log("eliminar")}
             >
               <DeleteIcon fontSize="small" />
             </IconButton>
@@ -104,19 +79,7 @@ export const UserTabla = ({
 
   return (
     <Box height={545}>
-      <DataGrid
-        rows={users}
-        columns={columns}
-        rowCount={rowCount}
-        paginationMode="server"
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        sortingMode={"server"}
-        sortModel={sortModel}
-        onSortModelChange={setSortModel}
-        pageSizeOptions={[5, 10, 20]}
-        disableColumnFilter
-      />
+      <DataGrid rows={users} columns={columns} />
     </Box>
   );
 };
