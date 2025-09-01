@@ -2,11 +2,12 @@ import { Box } from "@mui/material";
 
 import {
   //  TaskDialog,
-  //  TaskFilter,
+  UserFilter,
   UserHeader,
-  //  TaskTabla,
   //  type TaskActionState,
 } from "../../components";
+import type { UserFilterStatusType } from "../../components/users/type";
+import { useState } from "react";
 
 //import { useState } from "react";
 //import type { TaskFilterDoneType, TaskType } from '../../components/tasks/type';
@@ -16,12 +17,29 @@ import {
 //import { schemaTask, type TaskFormValues } from '../../models';
 
 export const UsersPage = () => {
+  const [filterStatus, setFilterStatus] = useState<UserFilterStatusType>("all");
+  const [search, setSearch] = useState("");
+
+  const handleNewUser = () => {
+    console.log("Nuevo usuario");
+  };
+
+  return (
+    <Box sx={{ width: "100%" }}>
+      <UserHeader handleNewUser={handleNewUser} />
+      <UserFilter
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+        setSearch={setSearch}
+      ></UserFilter>
+      {search} - {filterStatus}
+    </Box>
+  );
+
   //  const { showAlert } = useAlert();
   //  const axios = useAxios();
-  //  const [filterStatus, setFilterStatus] = useState<TaskFilterDoneType>('all');
   //  const [search, setSearch] = useState('');
-  //  const [tasks, setTasks] = useState<TaskType[]>([]);
-  //  const [total, setTotal] = useState(0);
+
   /*
 const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 1,
@@ -59,12 +77,12 @@ const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     }
   };
 */
-
+  /*
   const handleOpenCreateDialog = () => {
     //setOpenDialog(true);
     //setTask(null);
   };
-
+*/
   /*
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -135,10 +153,4 @@ const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     }
   };
 */
-
-  return (
-    <Box sx={{ width: "100%" }}>
-      <UserHeader handleOpenCreateDialog={handleOpenCreateDialog} />
-    </Box>
-  );
 };

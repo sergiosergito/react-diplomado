@@ -2,10 +2,11 @@ import { Box, Button, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 
 interface Props {
-  handleOpenCreateDialog: () => void;
+  //handleOpenCreateDialog: () => void;
+  handleNewUser: () => void;
 }
 
-export const UserHeader = ({ handleOpenCreateDialog }: Props) => {
+export const UserHeader = ({ handleNewUser }: Props) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
       <Typography variant="h5" fontWeight={"bold"}>
@@ -14,7 +15,7 @@ export const UserHeader = ({ handleOpenCreateDialog }: Props) => {
       <Button
         variant="contained"
         startIcon={<AddIcon />}
-        onClick={handleOpenCreateDialog}
+        onClick={handleNewUser}
         sx={{ borderRadius: 3 }}
       >
         Nueva usuario

@@ -1,4 +1,4 @@
 //export * from './TaskDialog';
-//export * from './TaskFilter';
+export * from "./UserFilter";
 export * from "./UserHeader";
-//export * from './TaskTabla';
+export * from "./UserTabla";
