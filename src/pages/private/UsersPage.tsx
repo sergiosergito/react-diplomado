@@ -1,6 +1,12 @@
 import { Box } from "@mui/material";
 
-import { UserFilter, UserHeader, UserTabla } from "../../components";
+import {
+  UserDialog,
+  UserFilter,
+  UserHeader,
+  UserTabla,
+  type userActionState,
+} from "../../components";
 import type {
   UserFilterStatusType,
   UserType,
@@ -8,8 +14,8 @@ import type {
 import { useEffect, useState } from "react";
 import type { GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
 import { useAlert, useAxios } from "../../hooks";
-import { errorHelper } from "../../helpers";
-import { set } from "zod";
+import { errorHelper, hanleZodError } from "../../helpers";
+import { schemaTask, type UserFormValues } from "../../models";
 
 export const UsersPage = () => {
   const { showAlert } = useAlert();
@@ -17,25 +23,19 @@ export const UsersPage = () => {
 
   const [filterStatus, setFilterStatus] = useState<UserFilterStatusType>("all");
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<UserType[]>([
-    { id: 1, username: "user1", status: "active" },
-    { id: 2, username: "user2", status: "inactive" },
-    { id: 3, username: "user3", status: "active" },
-  ]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [total, setTotal] = useState(3);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 1,
     pageSize: 10,
   });
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
-
-  const handleNewUser = () => {
-    console.log("Nuevo usuario");
-  };
+  const [openDialog, setOpenDialog] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     listUserApi();
-  }, []);
+  }, [search, filterStatus, paginationModel, sortModel]);
 
   const listUserApi = async () => {
     try {
@@ -43,11 +43,11 @@ export const UsersPage = () => {
       const orderDir = sortModel[0]?.sort;
       const response = await axios.get("/users", {
         params: {
-          page: paginationModel.page,
-          limit: paginationModel.pageSize,
+          page: paginationModel.page ?? 0,
+          limit: paginationModel.pageSize ?? 10,
           orderBy,
           orderDir,
-          search,
+          search: search || undefined,
           status: filterStatus !== "all" ? filterStatus : undefined,
         },
       });
@@ -58,9 +58,40 @@ export const UsersPage = () => {
     }
   };
 
+  const handleOpenCreateDialog = () => {
+    setOpenDialog(true);
+    setUser(null);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setUser(null);
+  };
+
+  const handleCreateEdit = async (
+    _: userActionState | undefined,
+    formData: FormData
+  ) => {
+    const rawData = {
+      username: formData.get("username") as string,
+    };
+    try {
+      schemaTask.parse(rawData);
+      await axios.post("/users", rawData);
+      showAlert("Usuario creado correctamente", "success");
+      listUserApi();
+      handleCloseDialog();
+      return undefined;
+    } catch (error) {
+      const err = hanleZodError<UserFormValues>(error, rawData);
+      showAlert(err.message, "error");
+      return err;
+    }
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
-      <UserHeader handleNewUser={handleNewUser} />
+      <UserHeader handleOpenCreateDialog={handleOpenCreateDialog} />
       <UserFilter
         filterStatus={filterStatus}
         setFilterStatus={setFilterStatus}
@@ -75,6 +106,13 @@ export const UsersPage = () => {
         sortModel={sortModel}
         setSortModel={setSortModel}
       />
+      <UserDialog
+        open={openDialog}
+        user={user}
+        onClose={handleCloseDialog}
+        handleCreateEdit={handleCreateEdit}
+      />
+      //01:37:17
     </Box>
   );
 };
