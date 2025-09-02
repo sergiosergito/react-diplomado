@@ -21,6 +21,9 @@ interface Props {
   setPaginationModel: (model: GridPaginationModel) => void;
   sortModel: GridSortModel;
   setSortModel: (model: GridSortModel) => void;
+  handleDelete: (id: number) => void;
+  handleActivate: (id: number, activate: boolean) => void;
+  handleOpenEditDialog: (user: UserType) => void;
 }
 
 export const UserTabla = ({
@@ -30,6 +33,9 @@ export const UserTabla = ({
   setPaginationModel,
   setSortModel,
   sortModel,
+  handleDelete,
+  handleActivate,
+  handleOpenEditDialog,
 }: Props) => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
@@ -56,7 +62,10 @@ export const UserTabla = ({
       renderCell: (params: GridRenderCellParams) => (
         <Stack direction="row" spacing={1}>
           <Tooltip title="Edit" arrow>
-            <IconButton size="small" onClick={() => console.log("Edit user")}>
+            <IconButton
+              size="small"
+              onClick={() => handleOpenEditDialog(params.row)}
+            >
               <EditIcon fontSize="small" />
             </IconButton>
           </Tooltip>
@@ -67,7 +76,9 @@ export const UserTabla = ({
             <IconButton
               size="small"
               color={params.row.status === "active" ? "warning" : "success"}
-              onClick={() => console.log("marcar user")}
+              onClick={() =>
+                handleActivate(params.row.id, params.row.status === "active")
+              }
             >
               {params.row.status === "active" ? (
                 <UndoIcon fontSize="small" />
@@ -81,7 +92,7 @@ export const UserTabla = ({
             <IconButton
               size="small"
               color="error"
-              onClick={() => console.log("eliminar")}
+              onClick={() => handleDelete(params.row.id)}
             >
               <DeleteIcon fontSize="small" />
             </IconButton>

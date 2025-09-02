@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import type { GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
 import { useAlert, useAxios } from "../../hooks";
 import { errorHelper, hanleZodError } from "../../helpers";
-import { schemaTask, type UserFormValues } from "../../models";
+import { schemaUser, type UserFormValues } from "../../models";
 
 export const UsersPage = () => {
   const { showAlert } = useAlert();
@@ -35,6 +35,7 @@ export const UsersPage = () => {
 
   useEffect(() => {
     listUserApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, filterStatus, paginationModel, sortModel]);
 
   const listUserApi = async () => {
@@ -68,17 +69,29 @@ export const UsersPage = () => {
     setUser(null);
   };
 
+  const handleOpenEditDialog = (user: UserType) => {
+    setOpenDialog(true);
+    setUser(user);
+  };
+
   const handleCreateEdit = async (
     _: userActionState | undefined,
     formData: FormData
   ) => {
     const rawData = {
       username: formData.get("username") as string,
+      password: formData.get("password") as string,
+      confirmPassword: formData.get("confirmPassword") as string,
     };
     try {
-      schemaTask.parse(rawData);
-      await axios.post("/users", rawData);
-      showAlert("Usuario creado correctamente", "success");
+      schemaUser.parse(rawData);
+      if (user?.id) {
+        await axios.put(`/users/${user.id}`, rawData);
+        showAlert("Usuario editado correctamente", "success");
+      } else {
+        await axios.post("/users", rawData);
+        showAlert("Usuario creado correctamente", "success");
+      }
       listUserApi();
       handleCloseDialog();
       return undefined;
@@ -86,6 +99,32 @@ export const UsersPage = () => {
       const err = hanleZodError<UserFormValues>(error, rawData);
       showAlert(err.message, "error");
       return err;
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const confirmed = window.confirm(
+        "¿Estás seguro de eliminar este usuario?"
+      );
+      if (!confirmed) return;
+      await axios.delete(`/users/${id}`);
+      showAlert("Usuario eliminado", "success");
+      listUserApi();
+    } catch (error) {
+      showAlert(errorHelper(error), "error");
+    }
+  };
+
+  const handleActivate = async (id: number, activate: boolean) => {
+    try {
+      const confirmed = window.confirm("¿Cambiar estado?");
+      if (!confirmed) return;
+      await axios.patch(`/users/${id}`, { status: !activate });
+      showAlert("Usuario modificado", "success");
+      listUserApi();
+    } catch (error) {
+      showAlert(errorHelper(error), "error");
     }
   };
 
@@ -105,6 +144,9 @@ export const UsersPage = () => {
         setPaginationModel={setPaginationModel}
         sortModel={sortModel}
         setSortModel={setSortModel}
+        handleDelete={handleDelete}
+        handleActivate={handleActivate}
+        handleOpenEditDialog={handleOpenEditDialog}
       />
       <UserDialog
         open={openDialog}

@@ -62,7 +62,7 @@ export const UserDialog = ({
             required
             variant="outlined"
             disabled={isPending}
-            defaultValue={state?.formData?.username}
+            defaultValue={state?.formData?.username || user?.username || ""}
             error={!!state?.errors?.username}
             helperText={state?.errors?.username}
             sx={{ mb: 2 }}
@@ -80,6 +80,32 @@ export const UserDialog = ({
             helperText={state?.errors?.password}
             sx={{ mb: 2 }}
             type={showPassword ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                    aria-label="toggle password visibility"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            name="confirmPassword"
+            margin="normal"
+            required
+            fullWidth
+            label="Repetir password"
+            type={showPassword ? "text" : "password"}
+            disabled={isPending}
+            defaultValue={state?.formData?.confirmPassword}
+            error={!!state?.errors?.confirmPassword}
+            helperText={state?.errors?.confirmPassword}
+            sx={{ mb: 2 }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
