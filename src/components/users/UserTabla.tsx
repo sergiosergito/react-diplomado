@@ -2,6 +2,8 @@ import {
   DataGrid,
   type GridColDef,
   type GridRenderCellParams,
+  type GridPaginationModel,
+  type GridSortModel,
 } from "@mui/x-data-grid";
 import type { UserType } from "./type";
 import { Box, Chip, IconButton, Stack, Tooltip } from "@mui/material";
@@ -14,9 +16,21 @@ import {
 
 interface Props {
   users: UserType[];
+  rowCount: number;
+  paginationModel: GridPaginationModel;
+  setPaginationModel: (model: GridPaginationModel) => void;
+  sortModel: GridSortModel;
+  setSortModel: (model: GridSortModel) => void;
 }
 
-export const UserTabla = ({ users }: Props) => {
+export const UserTabla = ({
+  users,
+  rowCount,
+  paginationModel,
+  setPaginationModel,
+  setSortModel,
+  sortModel,
+}: Props) => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "username", headerName: "Username", width: 200 },
@@ -79,7 +93,19 @@ export const UserTabla = ({ users }: Props) => {
 
   return (
     <Box height={545}>
-      <DataGrid rows={users} columns={columns} />
+      <DataGrid
+        rows={users}
+        columns={columns}
+        rowCount={rowCount}
+        paginationMode="server"
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        sortingMode={"server"}
+        sortModel={sortModel}
+        onSortModelChange={setSortModel}
+        pageSizeOptions={[5, 10, 20]}
+        disableColumnFilter
+      />
     </Box>
   );
 };
