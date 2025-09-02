@@ -7,13 +7,16 @@ import {
   DialogActions,
   Button,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 
 import type { UserType } from "./type";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import type { ActionState } from "../../interfaces";
 import type { UserFormValues } from "../../models";
 import { createInitialState } from "../../helpers";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export type userActionState = ActionState<UserFormValues>;
 
@@ -39,6 +42,12 @@ export const UserDialog = ({
     initialState
   );
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth={"sm"} fullWidth>
       <DialogTitle>{user ? "Editar usuario" : "Nuevo usuario"}</DialogTitle>
@@ -57,6 +66,33 @@ export const UserDialog = ({
             error={!!state?.errors?.username}
             helperText={state?.errors?.username}
             sx={{ mb: 2 }}
+          />
+          <TextField
+            name="password"
+            margin="dense"
+            label="Contraseña de usuario"
+            fullWidth
+            required
+            variant="outlined"
+            disabled={isPending}
+            defaultValue={state?.formData?.password}
+            error={!!state?.errors?.password}
+            helperText={state?.errors?.password}
+            sx={{ mb: 2 }}
+            type={showPassword ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                    aria-label="toggle password visibility"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
