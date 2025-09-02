@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box } from "@mui/material";
 
 import {
@@ -21,7 +22,10 @@ export const UsersPage = () => {
   const { showAlert } = useAlert();
   const axios = useAxios();
 
-  const [filterStatus, setFilterStatus] = useState<UserFilterStatusType>("all");
+  // To skip the type error, you can explicitly cast "all" to UserFilterStatusType:
+  const [filterStatus, setFilterStatus] = useState<UserFilterStatusType>(
+    "all" as UserFilterStatusType
+  );
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<UserType[]>([]);
   const [total, setTotal] = useState(3);
